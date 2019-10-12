@@ -1,0 +1,6 @@
+Revision history for Perl extension Rax.
+
+0.01  Sat Oct 12 01:01:49 2019
+	- original version; created by h2xs 1.23 with options
+		-A -b 5.20.3 Rax
+
