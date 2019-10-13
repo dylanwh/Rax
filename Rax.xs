@@ -26,7 +26,7 @@ MODULE = Rax PACKAGE = Rax PREFIX = rax_
 PROTOTYPES: DISABLE
 
 Rax
-new(package)
+rax_new(package)
     SV *package = NO_INIT
 CODE:
     (void)package;
@@ -61,7 +61,7 @@ OUTPUT:
     RETVAL
 
 SV *
-remove(self, key)
+rax_remove(self, key)
     Rax self
     SV *key
 PREINIT:
@@ -82,7 +82,7 @@ OUTPUT:
     RETVAL
 
 bool
-exists(self, key)
+rax_exists(self, key)
     Rax self
     SV *key
 PREINIT:
@@ -97,7 +97,7 @@ OUTPUT:
     RETVAL
 
 SV *
-find(self, key)
+rax_find(self, key)
     Rax self
     SV *key
 PREINIT:
@@ -117,13 +117,13 @@ OUTPUT:
     RETVAL
 
 void
-show(self)
+rax_show(self)
     Rax self
 CODE:
     raxShow(self);
 
 size_t
-size(self)
+rax_size(self)
     Rax self
 CODE:
     RETVAL = raxSize(self);
@@ -131,13 +131,14 @@ OUTPUT:
     RETVAL
 
 void
-DESTROY(self)
+rax_DESTROY(self)
     Rax self
 CODE:
     raxFreeWithCallback(self, rax_free_callback);
 
 Rax::Iterator
-iter(Rax self)
+rax_iter(self)
+    Rax self
 PREINIT:
     struct RaxIterator *ctx;
 CODE:
@@ -151,9 +152,30 @@ OUTPUT:
 MODULE = Rax PACKAGE = Rax::Iterator PREFIX = rax_iter_
 
 void
-DESTROY(self)
+rax_iter_seek(self, op, ...)
     Rax::Iterator self
+    const char *op
 PREINIT:
+    const char *element = NULL;
+    STRLEN len = 0;
+    int rv;
+CODE:
+    if (items > 2) {
+        element = SvPVutf8(ST(2), len);
+    }
+    rv = raxSeek(&self->it, op, (unsigned char *) element, len);
+    if (rv == 0) {
+        if (errno == 0) {
+            croak("\"%s\" is not a valid operation for Rax::Iterator->seek()", op);
+        }
+        else {
+            croak("Rax ran out of memory");
+        }
+    }
+
+void
+rax_iter_DESTROY(self)
+    Rax::Iterator self
 CODE:
     raxStop(&self->it);
     SvREFCNT_dec(self->rax_ref);

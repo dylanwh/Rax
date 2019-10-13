@@ -76,5 +76,10 @@ use ok 'Rax';
   ok(!defined($r), "object is cleared when iter is free()'d");
 }
 
+{
+  my $r = Rax->new;
+  like( dies { $r->iter->seek("q") }, qr/\Q"q" is not a valid operation for Rax::Iterator->seek/)
+}
+
 
 done_testing;
