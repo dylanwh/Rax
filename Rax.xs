@@ -9,6 +9,13 @@
 
 typedef rax * Rax;
 
+struct RaxIterator {
+    SV *rax_ref;
+    raxIterator it;
+};
+
+typedef struct RaxIterator * Rax__Iterator;
+
 static void rax_free_callback(void *data)
 {
     SvREFCNT_dec( (SV *) data );
@@ -110,31 +117,44 @@ OUTPUT:
     RETVAL
 
 void
-show(Rax self)
-PREINIT:
-    SV *self_sv;
-    const char *self_sv_str;
-    STRLEN len;
+show(self)
+    Rax self
 CODE:
-    self_sv = ST(0);
-    self_sv_str = SvPV(self_sv, len);
-    printf("self: %s\n", self_sv_str);
     raxShow(self);
 
 size_t
-size(Rax self)
+size(self)
+    Rax self
 CODE:
     RETVAL = raxSize(self);
 OUTPUT:
     RETVAL
 
 void
-DESTROY(Rax self)
-    CODE:
-        raxFreeWithCallback(self, rax_free_callback);
+DESTROY(self)
+    Rax self
+CODE:
+    raxFreeWithCallback(self, rax_free_callback);
 
+Rax::Iterator
+iter(Rax self)
+PREINIT:
+    struct RaxIterator *ctx;
+CODE:
+    ctx = malloc(sizeof(struct RaxIterator));
+    ctx->rax_ref = newRV_inc(SvRV(ST(0)));
+    raxStart(&ctx->it, self);
+    RETVAL = ctx;
+OUTPUT:
+    RETVAL
 
 MODULE = Rax PACKAGE = Rax::Iterator PREFIX = rax_iter_
 
-
-
+void
+DESTROY(self)
+    Rax::Iterator self
+PREINIT:
+CODE:
+    raxStop(&self->it);
+    SvREFCNT_dec(self->rax_ref);
+    free(self);
