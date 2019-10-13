@@ -1,0 +1,8 @@
+\B\.git\b
+\.bak$
+rax/TODO\.md$
+rax/crc16\.c$
+rax/rax-oom-test\.c$
+rax/rax-test\.c$
+rax/rc4rand\.c$
+rax/rc4rand\.h$
