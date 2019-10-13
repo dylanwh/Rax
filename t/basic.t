@@ -67,5 +67,14 @@ use ok 'Rax';
   is( $r->size, 4 );
 }
 
+{
+  my $r = Rax->new;
+  my $iter = $r->iter;
+  weaken $r;
+  ok(defined($r), "iter keeps main object alive");
+  $iter = undef;
+  ok(!defined($r), "object is cleared when iter is free()'d");
+}
+
 
 done_testing;
