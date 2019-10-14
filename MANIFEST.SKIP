@@ -7,6 +7,7 @@ rax/rax-oom-test\.c$
 rax/rax-test\.c$
 rax/rc4rand\.c$
 rax/rc4rand\.h$
+rax/Makefile$
 \.o$
 ^Makefile(?:\.old)?$
 ^Rax\.c$

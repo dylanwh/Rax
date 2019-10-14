@@ -5,21 +5,18 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Rax',
     VERSION_FROM      => 'lib/Rax.pm', # finds $VERSION, requires EU::MM from perl >= 5.5
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     ABSTRACT_FROM     => 'lib/Rax.pm', # retrieve abstract from module
+    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     AUTHOR            => 'Dylan Hardison <dylan@local>',
     LICENSE           => 'bsd',
-    #Value must be from legacy list of licenses here
-    #http://search.cpan.org/perldoc?Module%3A%3ABuild%3A%3AAPI
-    LIBS              => ['-lm'],
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
     INC               => '-Irax -I.', # e.g., '-I. -I/usr/include/other'
-    OBJECT            => '$(O_FILES) rax/rax.o', # link all the C files too
+    OBJECT            => '$(O_FILES) rax_core.o', # link all the C files too
 );
 
 sub MY::postamble {
-  return <<'MAKE';
-rax/rax.o: rax/Makefile rax/rax.c rax/rax.h
-	cd rax && $(MAKE) rax.o
-MAKE
+  return join("\n",
+    "rax_core.c: rax/rax.c",
+    "\tcp \$< \$@"
+  ) . "\n";
 }

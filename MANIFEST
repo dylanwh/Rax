@@ -1,6 +1,5 @@
-bench.pl
 Changes
-foo
+COPYING
 lib/Rax.pm
 lib/Rax/Iterator.pm
 Makefile.PL
@@ -11,7 +10,6 @@ MYMETA.yml
 ppport.h
 Rax.xs
 rax/COPYING
-rax/Makefile
 rax/rax.c
 rax/rax.h
 rax/rax_malloc.h

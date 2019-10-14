@@ -12,6 +12,7 @@ sub keys {
 
   while (my $key = $iter->next) {
     push @keys, $key;
+    last if $iter->eof;
   }
 
   return @keys;
@@ -23,6 +24,7 @@ sub values {
 
   while (my (undef, $value) = $iter->next) {
     push @values, $value;
+    last if $iter->eof;
   }
 
   return @values;

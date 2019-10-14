@@ -18,6 +18,7 @@ typedef struct RaxIterator * Rax__Iterator;
 
 static void rax_free_callback(void *data)
 {
+    dTHX;
     SvREFCNT_dec( (SV *) data );
 }
 
