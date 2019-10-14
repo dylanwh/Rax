@@ -6,6 +6,29 @@ use warnings;
 sub first { $_[0]->seek('^') }
 sub last  { $_[0]->seek('$') }
 
+sub keys {
+  my $iter = shift;
+  my @keys;
+
+  while (my $key = $iter->next) {
+    push @keys, $key;
+  }
+
+  return @keys;
+}
+
+sub values {
+  my $iter = shift;
+  my @values;
+
+  while (my (undef, $value) = $iter->next) {
+    push @values, $value;
+  }
+
+  return @values;
+}
+
+
 
 1;
 __END__

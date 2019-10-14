@@ -8,7 +8,7 @@ WriteMakefile(
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     ABSTRACT_FROM     => 'lib/Rax.pm', # retrieve abstract from module
     AUTHOR            => 'Dylan Hardison <dylan@local>',
-    LICENSE           => 'perl',
+    LICENSE           => 'bsd',
     #Value must be from legacy list of licenses here
     #http://search.cpan.org/perldoc?Module%3A%3ABuild%3A%3AAPI
     LIBS              => ['-lm'],

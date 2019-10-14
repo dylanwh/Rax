@@ -175,6 +175,23 @@ PPCODE:
     }
     XPUSHs(ST(0));
 
+bool
+rax_iter_compare(self, op, ...)
+    Rax::Iterator self
+    const char *op;
+PREINIT:
+    const char *element = NULL;
+    STRLEN len = 0;
+    int rv;
+CODE:
+    if (items > 2) {
+        element = SvPVutf8(ST(2), len);
+    }
+    rv = raxCompare(&self->it, op, (unsigned char *) element, len);
+    RETVAL = rv ? true : false;
+OUTPUT:
+    RETVAL
+
 SV *
 rax_iter_key(self)
     Rax::Iterator self

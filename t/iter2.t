@@ -23,6 +23,10 @@ $rax->insert($_) for counties();
   my @expect = counties();
   @expect = sort @expect;
   is(\@counties, \@expect);
+
+  $iter->first;
+  ok( $iter->compare("==", $counties[0]), "compare == works");
+  ok($iter->compare('<', $counties[2]), "compare < works");
 }
 
 {

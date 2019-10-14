@@ -11,6 +11,31 @@ sub seek {
   return $iter;
 }
 
+
+sub keys {
+  my $self = shift;
+  my $iter = $self->iter->seek('^');
+  my @keys;
+
+  while (my $key = $iter->next) {
+    push @keys, $key;
+  }
+
+  return @keys;
+}
+
+sub values {
+  my $self = shift;
+  my $iter = $self->iter->seek('^');
+  my @values;
+
+  while (my (undef, $value) = $iter->next) {
+    push @values, $value;
+  }
+
+  return @values;
+}
+
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
