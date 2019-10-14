@@ -159,7 +159,8 @@ PREINIT:
     const char *element = NULL;
     STRLEN len = 0;
     int rv;
-CODE:
+PPCODE:
+    /* PPCODE to prevent mortalizing self... */
     if (items > 2) {
         element = SvPVutf8(ST(2), len);
     }
@@ -172,6 +173,98 @@ CODE:
             croak("Rax ran out of memory");
         }
     }
+    XPUSHs(ST(0));
+
+SV *
+rax_iter_key(self)
+    Rax::Iterator self
+CODE:
+    RETVAL = newSVpvn((const char *)self->it.key, self->it.key_len);
+OUTPUT:
+    RETVAL
+
+void
+rax_iter_value(self)
+    Rax::Iterator self
+PREINIT:
+    SV *value = &PL_sv_undef;
+PPCODE:
+    /* I am only using PPCODE here because I don't think I want self->it.data to be mortalized */
+    if (self->it.data != NULL)
+        value = (SV *) self->it.data;
+    XPUSHs(value);
+
+void
+rax_iter_next(self)
+    Rax::Iterator self
+PREINIT:
+    int rv;
+    raxIterator *iter;
+PPCODE:
+    iter = &self->it;
+    rv = raxNext(iter);
+    switch (GIMME_V) {
+        case G_VOID:
+            break;
+        case G_SCALAR:
+            if (rv) {
+                XPUSHs(sv_2mortal(newSVpvn((const char *)iter->key, iter->key_len)));
+            }
+            else {
+                XPUSHs(&PL_sv_undef);
+            }
+            break;
+        case G_ARRAY:
+            if (rv) {
+                EXTEND(sp, 2);
+                PUSHs( sv_2mortal(newSVpvn((const char *)iter->key, iter->key_len)));
+                PUSHs( iter->data != NULL ? (SV *) iter->data : &PL_sv_undef );
+            }
+            break;
+        default:
+            /* shouldn't happen, don't care if it does. */
+            break;
+    }
+
+void
+rax_iter_prev(self)
+    Rax::Iterator self
+PREINIT:
+    int rv;
+    raxIterator *iter;
+PPCODE:
+    iter = &self->it;
+    rv = raxPrev(iter);
+    switch (GIMME_V) {
+        case G_VOID:
+            break;
+        case G_SCALAR:
+            if (rv) {
+                XPUSHs(sv_2mortal(newSVpvn((const char *)iter->key, iter->key_len)));
+            }
+            else {
+                XPUSHs(&PL_sv_undef);
+            }
+            break;
+        case G_ARRAY:
+            if (rv) {
+                EXTEND(sp, 2);
+                PUSHs( sv_2mortal(newSVpvn((const char *)iter->key, iter->key_len)));
+                PUSHs( iter->data != NULL ? (SV *) iter->data : &PL_sv_undef );
+            }
+            break;
+        default:
+            /* shouldn't happen, don't care if it does. */
+            break;
+    }
+
+bool
+rax_iter_eof(self)
+    Rax::Iterator self
+CODE:
+    RETVAL = raxEOF(&self->it) ? true : false;
+OUTPUT:
+    RETVAL
 
 void
 rax_iter_DESTROY(self)

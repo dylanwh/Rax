@@ -67,19 +67,5 @@ use ok 'Rax';
   is( $r->size, 4 );
 }
 
-{
-  my $r = Rax->new;
-  my $iter = $r->iter;
-  weaken $r;
-  ok(defined($r), "iter keeps main object alive");
-  $iter = undef;
-  ok(!defined($r), "object is cleared when iter is free()'d");
-}
-
-{
-  my $r = Rax->new;
-  like( dies { $r->iter->seek("q") }, qr/\Q"q" is not a valid operation for Rax::Iterator->seek/)
-}
-
 
 done_testing;

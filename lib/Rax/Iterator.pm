@@ -1,34 +1,18 @@
-package Rax;
+package Rax::Iterator;
 
 use 5.020003;
 use warnings;
-use Rax::Iterator;
 
-sub seek {
-  my $self = shift;
-  my $iter = $self->iter;
-  $iter->seek(@_);
-  return $iter;
-}
+sub first { $_[0]->seek('^') }
+sub last  { $_[0]->seek('$') }
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-our $VERSION = '1.00';
-
-require XSLoader;
-XSLoader::load('Rax', $VERSION);
-
-# Preloaded methods go here.
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Rax - Perl extension for blah blah blah
+Rax::Iterator - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 

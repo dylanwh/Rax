@@ -42,14 +42,15 @@ use ok 'Rax';
   while (my $key = $iter->next) {
     push @found, $iter->key;
   }
-  is(\@found, ["rax", "rax is cool", "rax stores null for free"]);
+  is(\@found, ["rax", "rax is cool", "rax stores null for free"], "test calling next() in scalar context");
 
   $iter->seek(">=", "rax");
   my %found;
   while (my ($key, $val) = $iter->next) {
     $found{$key} = $val;
   }
-  is(\%found, { rax => 2, "rax is cool" => 1, "rax stores null for free" => undef });
+  is(\%found, { rax => 2, "rax is cool" => 1, "rax stores null for free" => undef }, "test calling next() in list context");
 }
+
 
 done_testing;

@@ -1,7 +1,8 @@
-.gitmodules
+bench.pl
 Changes
+foo
 lib/Rax.pm
-Makefile
+lib/Rax/Iterator.pm
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
@@ -9,7 +10,6 @@ MYMETA.json
 MYMETA.yml
 ppport.h
 Rax.xs
-rax/.gitignore
 rax/COPYING
 rax/Makefile
 rax/rax.c
@@ -18,4 +18,8 @@ rax/rax_malloc.h
 rax/rax_oom_malloc.h
 rax/README.md
 README
+t/basic.t
+t/iter.t
+t/iter2.t
 t/Rax.t
+typemap
