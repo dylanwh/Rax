@@ -22,18 +22,55 @@ static void rax_free_callback(void *data)
     SvREFCNT_dec( (SV *) data );
 }
 
+static void rax_init_from_hash(pTHX_ rax *rt, HV *init)
+{
+    SV *value;
+    char *buffer;
+    I32 len;
+
+    while (value = hv_iternextsv(init, &buffer, &len)) {
+        raxInsert(rt,
+                (unsigned char *)buffer,
+                len,
+                (void *)newSVsv(value),
+                NULL);
+    }
+}
+
 MODULE = Rax PACKAGE = Rax PREFIX = rax_
 
 PROTOTYPES: DISABLE
 
 Rax
-rax_new(package)
+rax_new(package, ...)
     SV *package = NO_INIT
+PREINIT:
+    SV *init = NULL;
 CODE:
     (void)package;
     RETVAL = raxNew();
+
+    if (items > 1) {
+        init = ST(1);
+        if (!SvROK(init)) {
+            croak("Rax->new() takes an optional hash ref");
+        }
+        switch (SvTYPE(SvRV(init))) {
+            case SVt_PVHV:
+                rax_init_from_hash(aTHX_ RETVAL, (HV *) SvRV(init));
+                break;
+            default:
+                break;
+        }
+    }
 OUTPUT:
     RETVAL
+
+void
+rax_DESTROY(self)
+    Rax self
+CODE:
+    raxFreeWithCallback(self, rax_free_callback);
 
 SV *
 insert(self, key, ...)
@@ -130,12 +167,6 @@ CODE:
     RETVAL = raxSize(self);
 OUTPUT:
     RETVAL
-
-void
-rax_DESTROY(self)
-    Rax self
-CODE:
-    raxFreeWithCallback(self, rax_free_callback);
 
 Rax::Iterator
 rax_iter(self)

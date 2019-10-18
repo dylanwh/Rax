@@ -12,7 +12,7 @@ use ok 'Rax';
   my $r = Rax->new;
   my $called = 0;
   my $g = guard { $called++ };
-  $r->insert("foo", $g);
+  $r->insert("guard", $g);
   is($called, 0);
   $g = undef;
   is($called, 0);
@@ -24,11 +24,25 @@ use ok 'Rax';
   my $r = Rax->new;
   my $called = 0;
   my $g = guard { $called++ };
-  $r->insert("foo", $g);
+  $r->insert("guard", $g);
   is($called, 0);
   $g = undef;
   is($called, 0);
-  $r->insert("foo");
+  my $og = $r->remove("guard");
+  is($called, 0);
+  $og = undef;
+  is($called, 1);
+}
+
+{
+  my $r = Rax->new;
+  my $called = 0;
+  my $g = guard { $called++ };
+  $r->insert("guard", $g);
+  is($called, 0);
+  $g = undef;
+  is($called, 0);
+  $r->insert("guard");
   is($called, 1);
 }
 
@@ -67,5 +81,30 @@ use ok 'Rax';
   is( $r->size, 4 );
 }
 
+{
+  my %h;
+  foreach my $k ('a' .. 'z') {
+    $h{$k} = 1;
+  }
+  my $r = Rax->new(\%h);
+
+  foreach my $k ('a' .. 'z') {
+    is($r->find($k), 1);
+  }
+
+}
+
+
+{
+  my %h;
+  foreach my $k ('a' .. 'z') {
+    $h{$k} = undef;
+  }
+  my $r = Rax->new(\%h);
+
+  foreach my $k ('a' .. 'z') {
+    ok($r->exists($k));
+  }
+}
 
 done_testing;
